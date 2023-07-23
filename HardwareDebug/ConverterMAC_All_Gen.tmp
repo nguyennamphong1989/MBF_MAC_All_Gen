@@ -1,0 +1,10 @@
+-MAKEUD=C:\Users\Admin\e2_studio\workspace\MAC_All_Gen\HardwareDebug\\MAC_All_Gen_c.ud
+-input="MAC_All_Gen.abs"
+-form=stype
+-output="MAC_All_Gen.mot"
+-record=s3
+-end_record=s7
+-byte_count=10
+-nologo
+-nomessage
+-exit

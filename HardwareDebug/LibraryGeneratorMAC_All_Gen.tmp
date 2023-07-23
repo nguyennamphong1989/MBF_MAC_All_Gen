@@ -1,0 +1,7 @@
+-MAKEUD_LBG="C:\Users\Admin\e2_studio\workspace\MAC_All_Gen\HardwareDebug\\MAC_All_Gen_lbg.ud"
+-isa=rxv1
+-nofpu
+-lang=c99
+-head=runtime,math,stdio,stdlib,string,new
+-output="MAC_All_Gen.lib"
+-nologo

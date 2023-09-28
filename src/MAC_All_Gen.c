@@ -26,7 +26,7 @@
 #define Emko_ID 0x01
 #define MAC_ID 0x06
 #define MAC_timeout_level 600
-#define MAC_VERSION 3
+#define MAC_VERSION 4
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -101,6 +101,7 @@ uint8_t g_is_all_relay_off=0;
 uint8_t trans_enable=0;
 uint8_t GenIsConnected =0;
 uint8_t error_check=0;
+uint8_t MACisConnected=1;
 
 float cof_vol[12] = {-121.9066, 121.9066*3.3,  -122.1679, 122.1679*3.3,   -119.24,  119.24*3.3,
 					 -123.7055, 123.7055*3.3,  -120.2011, 120.2011*3.3,   -120.7989,120.7989*3.3
@@ -113,6 +114,7 @@ uint16_t MAC_registers[130];
 uint8_t Rs485_MasterResponse[265];// Response to MCC
 uint16_t Gen_registers[120];
 uint16_t previous_mode;
+uint8_t atm_reboot=0;
 
 /***************** FUNCTION *************************************************/
 MD_STATUS R_SCI12_AsyncTransmit (uint8_t * const tx_buf,uint16_t tx_num,uint8_t control);
@@ -158,6 +160,7 @@ void Import_Smartgen_Reg(uint16_t *Smartgen_reg, uint16_t *MAC_registers);
 void Import_Emko_Reg(uint16_t *Smartgen_reg, uint16_t *MAC_registers);
 
 void Load_Check();
+void ATM_CMD_REBOOT();
 void ATM_CMD_read(uint8_t channel);
 void ATM_CMD_FREQ();
 void ATM_CMD_AUX();
@@ -183,6 +186,7 @@ void Generator_Switch();
 void TimerMode();
 void Relay5_On();
 void Relay5_Off();
+void storage_readDataStorage();
 
 void main(void)
 {
@@ -1897,6 +1901,52 @@ void RS485_Master_Mode(uint16_t *Slave_registers,uint16_t *MAC_registers, genera
 		Import_Emko_Reg(Slave_registers,MAC_registers);
 	}
 }
+void ATM_CMD_REBOOT()
+{
+	char tmp[20];
+	memset(tmp, 0, sizeof(tmp));
+	memset(rx1_buff,0,sizeof(rx1_buff));
+//	uint16_t curr5=0;
+
+//	R_Config_SCI1_Serial_Receive((uint8_t*)&rx1_buff, 40);
+
+	// SEND READ COMMAND TO ATM
+	memset(print_str, 0, sizeof(print_str));
+	sprintf(print_str,"AT+RESETWHALL\r\n");
+	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
+	R_BSP_SoftwareDelay(1000, BSP_DELAY_MILLISECS);
+	memset(print_str, 0, sizeof(print_str));
+	sprintf(print_str,"AT+REBOOT\r\n");
+	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
+	R_BSP_SoftwareDelay(1000, BSP_DELAY_MILLISECS);
+
+
+		//print test
+//		memset(print_str, 0, sizeof(print_str));
+//		sprintf(print_str,"\r\nAUX: ");
+//		RS485_DE2 = 1U; //RS485 send
+//		R_SCI5_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
+//		R_BSP_SoftwareDelay(10, BSP_DELAY_MILLISECS);
+//		R_SCI5_AsyncTransmit((uint8_t*)rx1_buff,strlen(rx1_buff));
+//		RS485_DE2 = 0U; //RS485 send
+		//end_print_test
+
+//	if(strlen(rx1_buff)) //+AUX:
+//	{
+//		if((rx1_buff[3]=='X')&&(rx1_buff[4]==':'))
+//		{
+//			memset(tmp, 0, sizeof(tmp));
+//			strncpy(tmp,rx1_buff+5,strlen(rx1_buff)-5);
+//			curr5 = atoi(tmp);
+//
+//			if(curr5*2.5>100) MAC_registers[0x1C] = (uint16_t)(curr5*2.5); //Curr
+//			else MAC_registers[0x1C] = 0;
+//		}
+//	}
+
+
+}
+
 void ATM_CMD_AUX()
 {
 	char tmp[20];
@@ -2001,8 +2051,6 @@ void ATM_CMD_FREQ()
 			//end_print_test
 		}
 	}
-
-
 }
 void ATM_CMD_read(uint8_t channel)
 {
@@ -2171,6 +2219,21 @@ void Load_Check()
 	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_AUX();
 	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
+
+	if(!atm_reboot)
+	{
+		if(MAC_registers[0x06]==0 && MAC_registers[0x07]==0 && MAC_registers[0x08]==0 && (MAC_registers[0x18]!=0 ||MAC_registers[0x19]!=0 || MAC_registers[0x1A]!=0))
+		{
+			ATM_CMD_REBOOT();
+			MAC_registers[0x7E] += 1;
+			atm_reboot =1;
+		}
+	}
+	if(MAC_registers[0x06]!=0 && MAC_registers[0x07]!=0 && MAC_registers[0x08]!=0)
+	{
+		atm_reboot =0;
+		MAC_registers[0x7E] = 0;
+	}
 }
 void Mode_UseGrid()
 {

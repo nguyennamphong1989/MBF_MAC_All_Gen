@@ -52,6 +52,7 @@ extern uint8_t GenStart;
 extern uint8_t GenIsConnected;
 extern uint32_t GenRunTime; // second
 extern uint32_t MAC_timeout;
+extern uint8_t MACisConnected;//Connect to MCC
 extern uint8_t error_check;
 uint32_t wait_time=0;
 uint32_t freq_ustbl_time_count=0;
@@ -102,10 +103,12 @@ static void r_Config_CMT1_cmi1_interrupt(void)
 	{
 		MAC_timeout++;
 		LED_MCC=0;
+		MACisConnected=1;
 	}
 	else //no connection to MCC
 	{
 		LED_MCC ^=1;
+		MACisConnected=0;
 	}
 	//LED_GEN
 	if(GenIsConnected) LED_GEN=0;

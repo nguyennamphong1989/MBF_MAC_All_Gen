@@ -25,7 +25,7 @@
 #define Smartgen_ID 0x01
 #define Emko_ID 0x01
 #define MAC_ID 0x06
-#define MAC_timeout_level 600
+#define MAC_timeout_level 300
 #define MAC_VERSION 4
 typedef enum {
 	SMARTGEN =1,
@@ -1915,6 +1915,7 @@ void ATM_CMD_REBOOT()
 	sprintf(print_str,"AT+RESETWHALL\r\n");
 	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
 	R_BSP_SoftwareDelay(1000, BSP_DELAY_MILLISECS);
+
 	memset(print_str, 0, sizeof(print_str));
 	sprintf(print_str,"AT+REBOOT\r\n");
 	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
@@ -2224,12 +2225,14 @@ void Load_Check()
 	{
 		if(MAC_registers[0x06]==0 && MAC_registers[0x07]==0 && MAC_registers[0x08]==0 && (MAC_registers[0x18]!=0 ||MAC_registers[0x19]!=0 || MAC_registers[0x1A]!=0))
 		{
+			R_BSP_SoftwareDelay(1000, BSP_DELAY_MILLISECS);
 			ATM_CMD_REBOOT();
 			MAC_registers[0x7E] += 1;
 			atm_reboot =1;
+			Buzzer(2, 50);
 		}
 	}
-	if(MAC_registers[0x06]!=0 && MAC_registers[0x07]!=0 && MAC_registers[0x08]!=0)
+	if(MAC_registers[0x06]!=0 || MAC_registers[0x07]!=0 || MAC_registers[0x08]!=0)
 	{
 		atm_reboot =0;
 		MAC_registers[0x7E] = 0;

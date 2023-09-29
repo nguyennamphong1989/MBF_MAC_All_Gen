@@ -2232,7 +2232,7 @@ void Load_Check()
 			Buzzer(2, 50);
 		}
 	}
-	if(MAC_registers[0x06]!=0 || MAC_registers[0x07]!=0 || MAC_registers[0x08]!=0)
+	if(MAC_registers[0x06]>15000 || MAC_registers[0x07]>15000 || MAC_registers[0x08]>15000)
 	{
 		atm_reboot =0;
 		MAC_registers[0x7E] = 0;

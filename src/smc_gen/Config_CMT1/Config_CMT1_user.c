@@ -44,6 +44,7 @@ Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
 #define MAC_timeout_level 600
+#define MAC_RESET_TIME 3600 //1hr
 #define LED_MCC (PORTH.PODR.BIT.B0)
 #define LED_GEN (PORTH.PODR.BIT.B3)
 #define LED_STT (PORT2.PODR.BIT.B7)
@@ -57,6 +58,7 @@ extern uint8_t error_check;
 uint32_t wait_time=0;
 uint32_t freq_ustbl_time_count=0;
 uint32_t gen_reset_time_count=0;
+uint32_t MAC_disconnect_time_count=0;
 uint32_t MAC_runtime=0;
 extern uint32_t Timer1Relay5;
 extern uint32_t Timer2Relay5;
@@ -104,11 +106,20 @@ static void r_Config_CMT1_cmi1_interrupt(void)
 		MAC_timeout++;
 		LED_MCC=0;
 		MACisConnected=1;
+		MAC_disconnect_time_count=0;
 	}
 	else //no connection to MCC
 	{
 		LED_MCC ^=1;
 		MACisConnected=0;
+		if(MAC_disconnect_time_count<MAC_RESET_TIME)
+		{
+			MAC_disconnect_time_count++;
+		}
+		else
+		{
+			if(MAC_registers[0x3C]==0)PowerON_Reset_PC();
+		}
 	}
 	//LED_GEN
 	if(GenIsConnected) LED_GEN=0;

@@ -26,7 +26,7 @@
 #define Emko_ID 0x01
 #define MAC_ID 0x06
 #define MAC_timeout_level 300
-#define MAC_VERSION 4
+#define MAC_VERSION 6
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -595,21 +595,41 @@ void Gen_Volt_Cal()
 		if(gen_volt1> 3.1) gen_volt1=0;
 		else
 		{
-			gen_volt1 = (3.3-gen_volt1)*(-1)*cof_vol[6];
+			if(gen_volt1 <= 2.3)
+			{
+				gen_volt1 = 160.0 + (3.3-gen_volt1)*35;
+			}
+			else {
+				gen_volt1 = (3.3-gen_volt1)*(-1)*cof_vol[6];
+			}
 			if(gen_volt1<70) gen_volt1 =0;
 		}
 		gen_volt2 = sqrt(gen_volt2/SAMPLES_NUM);
 		if(gen_volt2> 3.1) gen_volt2=0;
 		else
 		{
-			gen_volt2 = (3.3-gen_volt2)*(-1)*cof_vol[8];
+			if(gen_volt2 <= 2.3)
+			{
+				gen_volt2 = 160.0 + (3.3-gen_volt2)*35;
+			}
+			else
+			{
+				gen_volt2 = (3.3-gen_volt2)*(-1)*cof_vol[8];
+			}
 			if(gen_volt2<70) gen_volt2 =0;
 		}
 		gen_volt3 = sqrt(gen_volt3/SAMPLES_NUM) ;
 		if(gen_volt3> 3.1) gen_volt3=0;
 		else
 		{
-			gen_volt3 = (3.3-gen_volt3) *(-1)*cof_vol[10];
+			if(gen_volt3 <= 2.3)
+			{
+				gen_volt3 = 160.0 + (3.3-gen_volt3)*35;
+			}
+			else
+			{
+				gen_volt3 = (3.3-gen_volt3) *(-1)*cof_vol[10];
+			}
 			if(gen_volt3<70) gen_volt3 =0;
 		}
 		Sample_done=0;
@@ -694,7 +714,6 @@ uint8_t Gen_check()
 	{
 		status =0;
 		MAC_registers[0x39] =0;
-		MAC_registers[0x3C]=0;
 	}
 	MAC_registers[0x3B] = FB_GEN_COIL;
 	if(FB_GEN_COIL==1)// GEN RUN WITH LOAD
@@ -713,6 +732,16 @@ uint8_t Gen_check()
 		MAC_registers[0x0C] = MAC_registers[0x0F];
 		MAC_registers[0x0D] = MAC_registers[0x10];
 		MAC_registers[0x0E] = MAC_registers[0x11];
+
+		//Gen Curr = Load Curr
+		MAC_registers[0x15] = 	MAC_registers[0x18];
+		MAC_registers[0x16] = 	MAC_registers[0x19];
+		MAC_registers[0x17] = 	MAC_registers[0x1A];
+
+		// Power factor gen = power factor load
+		MAC_registers[0x32] = MAC_registers[0x35];
+		MAC_registers[0x33] = MAC_registers[0x36];
+		MAC_registers[0x34] = MAC_registers[0x37];
 
 		if(status == 1) MAC_registers[0x3C] = 3;
 	}
@@ -773,7 +802,13 @@ void Grid_Volt_Cal()
 		if(grid_volt1> 3.1) grid_volt1=0;
 		else
 		{
-			grid_volt1 = (3.3-grid_volt1)*(-1)*cof_vol[0];
+			if(grid_volt1 <= 2.3)
+			{
+				grid_volt1 = 160.0 + (3.3-grid_volt1)*35;
+			}
+			else {
+				grid_volt1 = (3.3-grid_volt1)*(-1)*cof_vol[0];
+			}
 			if(grid_volt1<70) grid_volt1 =0;
 		}
 
@@ -781,7 +816,13 @@ void Grid_Volt_Cal()
 		if(grid_volt2> 3.1) grid_volt2=0;
 		else
 		{
-			grid_volt2 = (3.3-grid_volt2)*(-1)*cof_vol[2];
+			if(grid_volt2 <= 2.3)
+			{
+				grid_volt2 = 160.0 + (3.3-grid_volt2)*35;
+			}
+			else {
+				grid_volt2 = (3.3-grid_volt2)*(-1)*cof_vol[2];
+			}
 			if(grid_volt2<70) grid_volt2 =0;
 		}
 
@@ -789,7 +830,13 @@ void Grid_Volt_Cal()
 		if(grid_volt3> 3.1) grid_volt3=0;
 		else
 		{
-			grid_volt3 = (3.3-grid_volt3)*(-1)*cof_vol[4];
+			if(grid_volt3 <= 2.3)
+			{
+				grid_volt3 = 160.0 + (3.3-grid_volt3)*35;
+			}
+			else {
+				grid_volt3 = (3.3-grid_volt3)*(-1)*cof_vol[4];
+			}
 			if(grid_volt3<70) grid_volt3 =0;
 		}
 		Sample_done=0;
@@ -825,10 +872,20 @@ uint8_t Grid_check()
 			MAC_registers[0x01] = 	MAC_registers[0x07];
 			MAC_registers[0x02] = 	MAC_registers[0x08];
 
+			//Grid Curr = Load Curr
+			MAC_registers[0x12] = 	MAC_registers[0x18];
+			MAC_registers[0x13] = 	MAC_registers[0x19];
+			MAC_registers[0x14] = 	MAC_registers[0x1A];
+
 			// Power grid = power load
 			MAC_registers[0x1D] = MAC_registers[0x23];
 			MAC_registers[0x1E] = MAC_registers[0x24];
 			MAC_registers[0x1F] = MAC_registers[0x25];
+
+			// Power factor grid = power factor load
+			MAC_registers[0x2F] = MAC_registers[0x35];
+			MAC_registers[0x30] = MAC_registers[0x36];
+			MAC_registers[0x31] = MAC_registers[0x37];
 		}
 	}
 	else if(MAC_registers[0x7B]== 2) // tram 1 pha co ATS
@@ -845,8 +902,12 @@ uint8_t Grid_check()
 		{
 			//Grid Volt = Volt from ATM
 			MAC_registers[0x00] = 	MAC_registers[0x06];
+			//Grid Curr = Load Curr
+			MAC_registers[0x12] = 	MAC_registers[0x18];
 			// Power grid = power load
 			MAC_registers[0x1D] = MAC_registers[0x23];
+			// Power factor grid = power factor load
+			MAC_registers[0x2F] = MAC_registers[0x35];
 		}
 	}
 	else if (MAC_registers[0x7B]==1) //tram 3 pha khong co ATS
@@ -856,17 +917,31 @@ uint8_t Grid_check()
 		MAC_registers[0x01] = 	MAC_registers[0x07];
 		MAC_registers[0x02] = 	MAC_registers[0x08];
 
+		//Grid Curr = Load Curr
+		MAC_registers[0x12] = 	MAC_registers[0x18];
+		MAC_registers[0x13] = 	MAC_registers[0x19];
+		MAC_registers[0x14] = 	MAC_registers[0x1A];
+
 		// Power grid = power load
 		MAC_registers[0x1D] = MAC_registers[0x23];
 		MAC_registers[0x1E] = MAC_registers[0x24];
 		MAC_registers[0x1F] = MAC_registers[0x25];
+
+		// Power factor grid = power factor load
+		MAC_registers[0x2F] = MAC_registers[0x35];
+		MAC_registers[0x30] = MAC_registers[0x36];
+		MAC_registers[0x31] = MAC_registers[0x37];
 	}
 	else if (MAC_registers[0x7B]==3) //tram 1 pha khong co ATS
 	{
 		//Grid Volt = Load Volt
 		MAC_registers[0x00] = 	MAC_registers[0x06];
+		//Grid Curr = Load Curr
+		MAC_registers[0x12] = 	MAC_registers[0x18];
 		// Power grid = power load
 		MAC_registers[0x1D] = MAC_registers[0x23];
+		// Power factor grid = power factor load
+		MAC_registers[0x2F] = MAC_registers[0x35];
 	}
 
 	// Grid Volt Warnning
@@ -1035,7 +1110,7 @@ void PC1X_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-//	MAC_registers[0x3C] = 0;
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1058,7 +1133,7 @@ void DST4400_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-//	MAC_registers[0x3C] = 0;
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1081,7 +1156,7 @@ void D300_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-//	MAC_registers[0x3C] = 0;
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1104,7 +1179,7 @@ void DSE7320_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-//	MAC_registers[0x3C] = 0;
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]);
 	if(Gen_check())
@@ -1127,7 +1202,7 @@ void GC315_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-//	MAC_registers[0x3C] = 0;
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1150,7 +1225,7 @@ void DKG307_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-//	MAC_registers[0x3C] = 0;
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1341,6 +1416,7 @@ void Smartgen_Manual(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 }
 void Smartgen_Start(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 {
+	MAC_registers[0x39] = 1;
 	uint8_t request[8];
 	memset(request, 0, sizeof(request));
 	uint16_t CRC16;
@@ -1396,9 +1472,7 @@ void Smartgen_Start(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 
 				// Update Gen error register
 
-				MAC_registers[0x4C] = 0;
-//				MAC_registers[0x3C] = 2; // GEN RUN NO LOAD
-//				MAC_registers[0x39] = 1;
+				MAC_registers[0x4C] = 0; //Gen Start successfully
 				GenStart =1;
 
 			}
@@ -2335,6 +2409,10 @@ void Mode_Auto()
 							}
 							else // if gen OFF
 							{
+								if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected Gen no output
+								{
+									MAC_registers[0x4C] =3; // GEN NO OUTPUT
+								}
 								// OFF GEN CONTACTOR
 								Gen_Contactor_Off();
 								// START GEN & ON GEN CONTACTOR
@@ -2363,6 +2441,10 @@ void Mode_Auto()
 						}
 						else // if gen OFF
 						{
+							if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected no Output at GEN
+							{
+								MAC_registers[0x4C] =3; // Error GEN no Output
+							}
 							// OFF GEN CONTACTOR
 							Gen_Contactor_Off();
 							// START GEN & ON GEN CONTACTOR
@@ -2417,7 +2499,7 @@ void Process_StoptGen_Manual()
 		if(!Gen_check())
 		{
 			MAC_registers[0x3C] =0;
-			MAC_registers[0x4C] =0;
+			MAC_registers[0x4C] =0; //GEN stop successfully
 			i=3;
 		}
 		else
@@ -2432,7 +2514,7 @@ void Process_StoptGen_Manual()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0;
+		MAC_registers[0x4C] = 0; //GEN stop successfully
 	}
 	MAC_registers[0x42] =0;
 }

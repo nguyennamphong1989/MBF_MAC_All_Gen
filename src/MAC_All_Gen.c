@@ -26,7 +26,7 @@
 #define Emko_ID 0x01
 #define MAC_ID 0x06
 #define MAC_timeout_level 300
-#define MAC_VERSION 6
+#define MAC_VERSION 7
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -310,7 +310,10 @@ void main(void)
 			// MANUAL OFF ALL
 			else if(MAC_registers[0x41] == 3)
 			{
-				if(g_is_all_relay_off==0) Process_OffAll();
+				if(g_is_all_relay_off==0)
+				{
+					Process_OffAll();
+				}
 				if(MAC_registers[0x53]>0)
 				{
 					MAC_registers[0x4C]=0;
@@ -1119,7 +1122,7 @@ void PC1X_Stop()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; // No error
+//		MAC_registers[0x4C] = 0; // No error
 		GenStart =0;
 	}
 }
@@ -1142,7 +1145,7 @@ void DST4400_Stop()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; // No error
+//		MAC_registers[0x4C] = 0; // No error
 		GenStart =0;
 	}
 }
@@ -1165,7 +1168,7 @@ void D300_Stop()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; // No error
+//		MAC_registers[0x4C] = 0; // No error
 		GenStart =0;
 	}
 }
@@ -1188,7 +1191,7 @@ void DSE7320_Stop()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; // No error
+//		MAC_registers[0x4C] = 0; // No error
 		GenStart =0;
 	}
 }
@@ -1211,7 +1214,7 @@ void GC315_Stop()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; // No error
+//		MAC_registers[0x4C] = 0; // No error
 		GenStart =0;
 	}
 }
@@ -1234,7 +1237,7 @@ void DKG307_Stop()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; // No error
+//		MAC_registers[0x4C] = 0; // No error
 		GenStart =0;
 	}
 }
@@ -1257,7 +1260,7 @@ void Emko_Stop()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; // No error
+//		MAC_registers[0x4C] = 0; // No error
 		GenStart =0;
 	}
 }
@@ -1314,7 +1317,7 @@ void Smartgen_Stop(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 				//end_print_test
 
 				// Update Gen error register
-				MAC_registers[0x4C] = 0; // No error
+//				MAC_registers[0x4C] = 0; // No error
 				MAC_registers[0x3C] = 0; // GEN STOP
 				MAC_registers[0x39] = 0; // Gen no voltage
 				GenStart =0;
@@ -1337,7 +1340,7 @@ void Smartgen_Stop(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 		}
 		else
 		{
-			MAC_registers[0x4C] = 0; // No error
+//			MAC_registers[0x4C] = 0; // No error
 			MAC_registers[0x3C] = 0; // GEN STOP
 			MAC_registers[0x39] = 0; // Gen no voltage
 			GenStart =0;
@@ -1472,7 +1475,7 @@ void Smartgen_Start(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 
 				// Update Gen error register
 
-				MAC_registers[0x4C] = 0; //Gen Start successfully
+//				MAC_registers[0x4C] = 0; //Gen Start successfully
 				GenStart =1;
 
 			}
@@ -2263,9 +2266,7 @@ void ATM_CMD_read(uint8_t channel)
 				}
 				if(channel == 3)
 				{
-
 					MAC_registers[0x1B] = (uint16_t)(para[1]/4); //Curr
-
 				}
 				memset(rx1_buff,0,sizeof(rx1_buff));
 				//print test
@@ -2340,11 +2341,11 @@ void Process_OffAll()
 		//OFF GEN CONTACTOR
 		Gen_Contactor_Off();
 		// OFF gen
-		if(Gen_check())
-		{
+//		if(Gen_check())
+//		{
 //			DKG_Stop(); //execute time max [0x58] sec
 			GENERATOR_STOP(GENTYPE);
-		}
+//		}
 		if(GenStart==0) g_is_all_relay_off =1; // Gen stop succesfully
 	}
 
@@ -2399,24 +2400,51 @@ void Mode_Auto()
 						// check gen run time
 						if(gen_running_timeout==0) // No violation -
 						{
-							// OFF GRID CONTACTOR
-							Grid_Contactor_Off();
-							//Check Gen
-							if(Gen_check()==1) // if gen ON
+//							// OFF GRID CONTACTOR
+//							Grid_Contactor_Off();
+//							//Check Gen
+//							if(Gen_check()==1) // if gen ON
+//							{
+//								//ON GEN CONTACTOR
+//								Gen_Contactor_On();
+//							}
+//							else // if gen OFF
+//							{
+//								if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected Gen no output
+//								{
+//									MAC_registers[0x4C] =3; // GEN NO OUTPUT
+//								}
+//								// OFF GEN CONTACTOR
+//								Gen_Contactor_Off();
+//								// START GEN & ON GEN CONTACTOR
+//								Process_StartGen();
+//							}
+							// Gen auto control
+							if(MAC_registers[0x4C]!=0)
 							{
-								//ON GEN CONTACTOR
-								Gen_Contactor_On();
+								Process_OffAll();
+								MAC_registers[0x3D] =0; //reset runtime
 							}
-							else // if gen OFF
+							else
 							{
-								if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected Gen no output
+								Grid_Contactor_Off();
+								if(Gen_check())
 								{
-									MAC_registers[0x4C] =3; // GEN NO OUTPUT
+									Gen_Contactor_On();
 								}
-								// OFF GEN CONTACTOR
-								Gen_Contactor_Off();
-								// START GEN & ON GEN CONTACTOR
-								Process_StartGen();
+								else
+								{
+									if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected Gen no output
+									{
+										MAC_registers[0x4C] =3; // GEN NO OUTPUT
+										Process_OffAll();
+									}
+									else
+									{
+										Gen_Contactor_Off();
+										Process_StartGen();
+									}
+								}
 							}
 						}
 						else // Runtime violation - OFF ALL
@@ -2431,24 +2459,51 @@ void Mode_Auto()
 					// check gen run time
 					if(gen_running_timeout==0) // No violation -
 					{
-						// OFF GRID CONTACTOR
-						Grid_Contactor_Off();
-						//Check Gen
-						if(Gen_check()==1) // if gen ON
+//						// OFF GRID CONTACTOR
+//						Grid_Contactor_Off();
+//						//Check Gen
+//						if(Gen_check()==1) // if gen ON
+//						{
+//							//ON GEN CONTACTOR
+//							Gen_Contactor_On();
+//						}
+//						else // if gen OFF
+//						{
+//							if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected no Output at GEN
+//							{
+//								MAC_registers[0x4C] =3; // Error GEN no Output
+//							}
+//							// OFF GEN CONTACTOR
+//							Gen_Contactor_Off();
+//							// START GEN & ON GEN CONTACTOR
+//							Process_StartGen();
+//						}
+						// Gen auto control
+						if(MAC_registers[0x4C]!=0)
 						{
-							//ON GEN CONTACTOR
-							Gen_Contactor_On();
+							Process_OffAll();
+							MAC_registers[0x3D] =0; //reset runtime
 						}
-						else // if gen OFF
+						else
 						{
-							if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected no Output at GEN
+							Grid_Contactor_Off();
+							if(Gen_check())
 							{
-								MAC_registers[0x4C] =3; // Error GEN no Output
+								Gen_Contactor_On();
 							}
-							// OFF GEN CONTACTOR
-							Gen_Contactor_Off();
-							// START GEN & ON GEN CONTACTOR
-							Process_StartGen();
+							else
+							{
+								if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected Gen no output
+								{
+									MAC_registers[0x4C] =3; // GEN NO OUTPUT
+									Process_OffAll();
+								}
+								else
+								{
+									Gen_Contactor_Off();
+									Process_StartGen();
+								}
+							}
 						}
 					}
 					else // Runtime violation - OFF ALL
@@ -2499,7 +2554,7 @@ void Process_StoptGen_Manual()
 		if(!Gen_check())
 		{
 			MAC_registers[0x3C] =0;
-			MAC_registers[0x4C] =0; //GEN stop successfully
+//			MAC_registers[0x4C] =0; //GEN stop successfully
 			i=3;
 		}
 		else
@@ -2514,7 +2569,7 @@ void Process_StoptGen_Manual()
 	}
 	else
 	{
-		MAC_registers[0x4C] = 0; //GEN stop successfully
+//		MAC_registers[0x4C] = 0; //GEN stop successfully
 	}
 	MAC_registers[0x42] =0;
 }
@@ -2550,7 +2605,7 @@ void Process_StartGen_Manual()
 	//			RS485_DE2 = 0U; //RS485 send
 				//end_print_test
 
-				MAC_registers[0x4C] = 0;
+//				MAC_registers[0x4C] = 0;
 				GenStart=1; // start count run time
 				i=3;
 
@@ -2580,7 +2635,7 @@ void Process_StartGen_Manual()
 		}
 		else
 		{
-			MAC_registers[0x4C] = 0;
+//			MAC_registers[0x4C] = 0;
 		}
 	}
 	else
@@ -2603,7 +2658,7 @@ void Process_StartGen()
 			waittime(MAC_registers[0x62]); //thoi gian de [0x62]
 			if(Gen_check())
 			{
-				MAC_registers[0x4C] = 0;
+//				MAC_registers[0x4C] = 0;
 				GenStart=1; // run time count
 				// wait stable
 				waittime(MAC_registers[0x59]);

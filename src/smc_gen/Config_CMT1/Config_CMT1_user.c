@@ -44,6 +44,7 @@ Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
 #define MAC_timeout_level 600
+#define MAC_RESET_TIME 3600 //1hr
 #define LED_MCC (PORTH.PODR.BIT.B0)
 #define LED_GEN (PORTH.PODR.BIT.B3)
 #define LED_STT (PORT2.PODR.BIT.B7)

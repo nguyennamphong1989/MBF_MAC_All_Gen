@@ -25,8 +25,13 @@
 #define Smartgen_ID 0x01
 #define Emko_ID 0x01
 #define MAC_ID 0x06
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 #define MAC_timeout_level 300
 #define MAC_VERSION 7
+=======
+#define MAC_timeout_level 600
+#define MAC_VERSION 3
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -102,7 +107,7 @@ uint8_t trans_enable=0;
 uint8_t GenIsConnected =0;
 uint8_t error_check=0;
 uint8_t MACisConnected=1;
-
+extern volatile uint32_t tick;
 float cof_vol[12] = {-121.9066, 121.9066*3.3,  -122.1679, 122.1679*3.3,   -119.24,  119.24*3.3,
 					 -123.7055, 123.7055*3.3,  -120.2011, 120.2011*3.3,   -120.7989,120.7989*3.3
 };
@@ -114,7 +119,6 @@ uint16_t MAC_registers[130];
 uint8_t Rs485_MasterResponse[265];// Response to MCC
 uint16_t Gen_registers[120];
 uint16_t previous_mode;
-uint8_t atm_reboot=0;
 
 /***************** FUNCTION *************************************************/
 MD_STATUS R_SCI12_AsyncTransmit (uint8_t * const tx_buf,uint16_t tx_num,uint8_t control);
@@ -598,6 +602,7 @@ void Gen_Volt_Cal()
 		if(gen_volt1> 3.1) gen_volt1=0;
 		else
 		{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 			if(gen_volt1 <= 2.3)
 			{
 				gen_volt1 = 160.0 + (3.3-gen_volt1)*35;
@@ -605,34 +610,23 @@ void Gen_Volt_Cal()
 			else {
 				gen_volt1 = (3.3-gen_volt1)*(-1)*cof_vol[6];
 			}
+=======
+			gen_volt1 = (3.3-gen_volt1)*(-1)*cof_vol[6];
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 			if(gen_volt1<70) gen_volt1 =0;
 		}
 		gen_volt2 = sqrt(gen_volt2/SAMPLES_NUM);
 		if(gen_volt2> 3.1) gen_volt2=0;
 		else
 		{
-			if(gen_volt2 <= 2.3)
-			{
-				gen_volt2 = 160.0 + (3.3-gen_volt2)*35;
-			}
-			else
-			{
-				gen_volt2 = (3.3-gen_volt2)*(-1)*cof_vol[8];
-			}
+			gen_volt2 = (3.3-gen_volt2)*(-1)*cof_vol[8];
 			if(gen_volt2<70) gen_volt2 =0;
 		}
 		gen_volt3 = sqrt(gen_volt3/SAMPLES_NUM) ;
 		if(gen_volt3> 3.1) gen_volt3=0;
 		else
 		{
-			if(gen_volt3 <= 2.3)
-			{
-				gen_volt3 = 160.0 + (3.3-gen_volt3)*35;
-			}
-			else
-			{
-				gen_volt3 = (3.3-gen_volt3) *(-1)*cof_vol[10];
-			}
+			gen_volt3 = (3.3-gen_volt3) *(-1)*cof_vol[10];
 			if(gen_volt3<70) gen_volt3 =0;
 		}
 		Sample_done=0;
@@ -805,6 +799,7 @@ void Grid_Volt_Cal()
 		if(grid_volt1> 3.1) grid_volt1=0;
 		else
 		{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 			if(grid_volt1 <= 2.3)
 			{
 				grid_volt1 = 160.0 + (3.3-grid_volt1)*35;
@@ -812,6 +807,9 @@ void Grid_Volt_Cal()
 			else {
 				grid_volt1 = (3.3-grid_volt1)*(-1)*cof_vol[0];
 			}
+=======
+			grid_volt1 = (3.3-grid_volt1)*(-1)*cof_vol[0];
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 			if(grid_volt1<70) grid_volt1 =0;
 		}
 
@@ -819,6 +817,7 @@ void Grid_Volt_Cal()
 		if(grid_volt2> 3.1) grid_volt2=0;
 		else
 		{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 			if(grid_volt2 <= 2.3)
 			{
 				grid_volt2 = 160.0 + (3.3-grid_volt2)*35;
@@ -826,6 +825,9 @@ void Grid_Volt_Cal()
 			else {
 				grid_volt2 = (3.3-grid_volt2)*(-1)*cof_vol[2];
 			}
+=======
+			grid_volt2 = (3.3-grid_volt2)*(-1)*cof_vol[2];
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 			if(grid_volt2<70) grid_volt2 =0;
 		}
 
@@ -833,6 +835,7 @@ void Grid_Volt_Cal()
 		if(grid_volt3> 3.1) grid_volt3=0;
 		else
 		{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 			if(grid_volt3 <= 2.3)
 			{
 				grid_volt3 = 160.0 + (3.3-grid_volt3)*35;
@@ -840,6 +843,9 @@ void Grid_Volt_Cal()
 			else {
 				grid_volt3 = (3.3-grid_volt3)*(-1)*cof_vol[4];
 			}
+=======
+			grid_volt3 = (3.3-grid_volt3)*(-1)*cof_vol[4];
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 			if(grid_volt3<70) grid_volt3 =0;
 		}
 		Sample_done=0;
@@ -1113,7 +1119,11 @@ void PC1X_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 	MAC_registers[0x3C] = 0;
+=======
+//	MAC_registers[0x3C] = 0;
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1122,7 +1132,11 @@ void PC1X_Stop()
 	}
 	else
 	{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
+=======
+		MAC_registers[0x4C] = 0; // No error
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 		GenStart =0;
 	}
 }
@@ -1136,7 +1150,11 @@ void DST4400_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 	MAC_registers[0x3C] = 0;
+=======
+//	MAC_registers[0x3C] = 0;
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1145,7 +1163,11 @@ void DST4400_Stop()
 	}
 	else
 	{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
+=======
+		MAC_registers[0x4C] = 0; // No error
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 		GenStart =0;
 	}
 }
@@ -1159,7 +1181,11 @@ void D300_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 	MAC_registers[0x3C] = 0;
+=======
+//	MAC_registers[0x3C] = 0;
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1168,7 +1194,11 @@ void D300_Stop()
 	}
 	else
 	{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
+=======
+		MAC_registers[0x4C] = 0; // No error
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 		GenStart =0;
 	}
 }
@@ -1182,7 +1212,11 @@ void DSE7320_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 	MAC_registers[0x3C] = 0;
+=======
+//	MAC_registers[0x3C] = 0;
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 
 	if(Gen_check()) waittime(MAC_registers[0x58]);
 	if(Gen_check())
@@ -1191,7 +1225,11 @@ void DSE7320_Stop()
 	}
 	else
 	{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
+=======
+		MAC_registers[0x4C] = 0; // No error
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 		GenStart =0;
 	}
 }
@@ -1205,7 +1243,11 @@ void GC315_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 	MAC_registers[0x3C] = 0;
+=======
+//	MAC_registers[0x3C] = 0;
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1214,7 +1256,11 @@ void GC315_Stop()
 	}
 	else
 	{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
+=======
+		MAC_registers[0x4C] = 0; // No error
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 		GenStart =0;
 	}
 }
@@ -1228,7 +1274,11 @@ void DKG307_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 	MAC_registers[0x3C] = 0;
+=======
+//	MAC_registers[0x3C] = 0;
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1237,7 +1287,11 @@ void DKG307_Stop()
 	}
 	else
 	{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
+=======
+		MAC_registers[0x4C] = 0; // No error
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 		GenStart =0;
 	}
 }
@@ -1260,7 +1314,11 @@ void Emko_Stop()
 	}
 	else
 	{
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
+=======
+		MAC_registers[0x4C] = 0; // No error
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 		GenStart =0;
 	}
 }
@@ -1978,6 +2036,7 @@ void RS485_Master_Mode(uint16_t *Slave_registers,uint16_t *MAC_registers, genera
 		Import_Emko_Reg(Slave_registers,MAC_registers);
 	}
 }
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 void ATM_CMD_REBOOT()
 {
 	char tmp[20];
@@ -2025,6 +2084,8 @@ void ATM_CMD_REBOOT()
 
 }
 
+=======
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 void ATM_CMD_AUX()
 {
 	char tmp[20];
@@ -2295,6 +2356,7 @@ void Load_Check()
 	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_AUX();
 	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 
 	if(!atm_reboot)
 	{
@@ -2312,6 +2374,8 @@ void Load_Check()
 		atm_reboot =0;
 		MAC_registers[0x7E] = 0;
 	}
+=======
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 }
 void Mode_UseGrid()
 {
@@ -2341,8 +2405,13 @@ void Process_OffAll()
 		//OFF GEN CONTACTOR
 		Gen_Contactor_Off();
 		// OFF gen
+<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		if(Gen_check())
 //		{
+=======
+		if(Gen_check())
+		{
+>>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 //			DKG_Stop(); //execute time max [0x58] sec
 			GENERATOR_STOP(GENTYPE);
 //		}

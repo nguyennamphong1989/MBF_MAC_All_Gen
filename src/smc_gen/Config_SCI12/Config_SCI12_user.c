@@ -48,7 +48,7 @@ extern volatile uint8_t * gp_sci12_rx_address;                /* SCI12 receive b
 extern volatile uint16_t  g_sci12_rx_count;                   /* SCI12 receive data number */
 extern volatile uint16_t  g_sci12_rx_length;                  /* SCI12 receive data length */
 /* Start user code for global. Do not edit comment generated here */
-char rx12_buff[128];
+char rx12_buff[300];
 volatile uint16_t rx12_count=0; // ADD TO RECEIVE INTERRUPT rx12_count=g_sci12_rx_count;
 volatile uint8_t SCI12_rxdone;
 static volatile uint8_t SCI12_txdone;

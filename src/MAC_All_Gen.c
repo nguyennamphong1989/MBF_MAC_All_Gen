@@ -28,10 +28,6 @@
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 #define MAC_timeout_level 300
 #define MAC_VERSION 7
-=======
-#define MAC_timeout_level 600
-#define MAC_VERSION 3
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,

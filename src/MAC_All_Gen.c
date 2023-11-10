@@ -115,6 +115,7 @@ uint16_t MAC_registers[300];
 uint8_t Rs485_MasterResponse[300];// Response to MCC
 uint16_t Gen_registers[120];
 uint16_t previous_mode;
+uint8_t atm_reboot=0;
 
 /***************** FUNCTION *************************************************/
 MD_STATUS R_SCI12_AsyncTransmit (uint8_t * const tx_buf,uint16_t tx_num,uint8_t control);

@@ -49,7 +49,7 @@ Global variables and functions
 volatile uint32_t tick=0;
 volatile bool overflow;
 uint16_t ADC_sample_count;
-#define SAMPLES_NUM  64
+#define SAMPLES_NUM  16
 volatile bool Sample_done=0;
 extern uint16_t ADC_VGen1[SAMPLES_NUM], ADC_VGen2[SAMPLES_NUM], ADC_VGen3[SAMPLES_NUM];
 extern uint16_t ADC_VGrid1[SAMPLES_NUM], ADC_VGrid2[SAMPLES_NUM], ADC_VGrid3[SAMPLES_NUM];

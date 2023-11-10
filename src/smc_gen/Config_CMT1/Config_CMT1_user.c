@@ -43,12 +43,12 @@ Includes
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
-#define MAC_timeout_level 600
+#define MAC_timeout_level 300
 #define MAC_RESET_TIME 3600 //1hr
 #define LED_MCC (PORTH.PODR.BIT.B0)
 #define LED_GEN (PORTH.PODR.BIT.B3)
 #define LED_STT (PORT2.PODR.BIT.B7)
-extern uint16_t MAC_registers[130];
+extern uint16_t MAC_registers[300];
 extern uint8_t GenStart;
 extern uint8_t GenIsConnected;
 extern uint32_t GenRunTime; // second

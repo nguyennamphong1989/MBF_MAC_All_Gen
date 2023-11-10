@@ -158,76 +158,36 @@
 									superClass="com.renesas.cdt.managedbuild.renesas.ccrx.common.option.deviceFamily"
 									useByScannerDiscovery="false" value="RX130" valueType="string" />
 							</tool>
-							<tool
-								id="com.renesas.cdt.managedbuild.renesas.ccrx.base.compiler.870855475"
-								name="Compiler"
-								superClass="com.renesas.cdt.managedbuild.renesas.ccrx.base.compiler">
-								<option
-									id="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.fpu.224585332"
-									name="Use floating point arithmetic instructions (-fpu/-nofpu)"
-									superClass="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.fpu"
-									useByScannerDiscovery="false"
-									value="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.fpu.no"
-									valueType="enumerated" />
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false"
-									id="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.include.330670061"
-									name="Include file directories (-include)"
-									superClass="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.include"
-									useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false"
-										value="${TCINSTALL}/include" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/general}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_config}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_pincfg}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_bsp}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI1}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI12}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI5}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_PORT}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_S12AD0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_ICU}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU3}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT1}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_RSPI0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_3}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_4}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_1}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/targets}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/r_fw_up_rx}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/EN25Q64_flash}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/apps}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen}&quot;" />
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrx.base.compiler.870855475" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrx.base.compiler">
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.fpu.224585332" name="Use floating point arithmetic instructions (-fpu/-nofpu)" superClass="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.fpu" useByScannerDiscovery="false" value="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.fpu.no" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.include.330670061" name="Include file directories (-include)" superClass="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.include" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="${TCINSTALL}/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/general}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_config}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_pincfg}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_bsp}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI1}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI12}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI5}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_PORT}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_S12AD0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_ICU}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU3}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT1}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_RSPI0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_3}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_1}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/targets}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/r_fw_up_rx}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/EN25Q64_flash}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/apps}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false"
 									id="com.renesas.cdt.managedbuild.renesas.ccrx.compiler.option.userBefore.506322860"
@@ -291,62 +251,30 @@
 									useByScannerDiscovery="false" valueType="stringList">
 									<listOptionValue builtIn="false" value="" />
 								</option>
-								<option
-									id="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.characterCode.1550831388"
-									name="Character code of an input program (-euc/-sjis/-latin1/-utf8/-big5/-gb2312)"
-									superClass="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.characterCode"
-									useByScannerDiscovery="false"
-									value="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.characterCode.utf8"
-									valueType="enumerated" />
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false"
-									id="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.include.400668394"
-									name="Include file directories (-include)"
-									superClass="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.include"
-									useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/general}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_config}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_pincfg}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_bsp}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI1}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI12}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI5}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_PORT}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_S12AD0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_ICU}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU3}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT1}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_3}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_4}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_1}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/targets}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_RSPI0}&quot;" />
-									<listOptionValue builtIn="false"
-										value="&quot;${workspace_loc:/${ProjName}/src/smc_gen}&quot;" />
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.characterCode.1550831388" name="Character code of an input program (-euc/-sjis/-latin1/-utf8/-big5/-gb2312)" superClass="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.characterCode" useByScannerDiscovery="false" value="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.characterCode.utf8" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.include.400668394" name="Include file directories (-include)" superClass="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.option.include" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/general}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_config}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_pincfg}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_bsp}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI1}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI12}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_SCI5}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_PORT}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_S12AD0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_ICU}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_MTU3}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_CMT1}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_3}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_4}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/flash_type_1}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src/targets}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_flash_rx/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_RSPI0}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen}&quot;"/>
 								</option>
 								<inputType
 									id="com.renesas.cdt.managedbuild.renesas.ccrx.assembler.inputType.884388707"

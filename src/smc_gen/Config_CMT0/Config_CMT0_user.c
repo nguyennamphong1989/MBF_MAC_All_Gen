@@ -49,7 +49,7 @@ Global variables and functions
 volatile uint32_t tick=0;
 volatile bool overflow;
 uint16_t ADC_sample_count;
-#define SAMPLES_NUM  16
+#define SAMPLES_NUM  64
 volatile bool Sample_done=0;
 extern uint16_t ADC_VGen1[SAMPLES_NUM], ADC_VGen2[SAMPLES_NUM], ADC_VGen3[SAMPLES_NUM];
 extern uint16_t ADC_VGrid1[SAMPLES_NUM], ADC_VGrid2[SAMPLES_NUM], ADC_VGrid3[SAMPLES_NUM];
@@ -134,6 +134,7 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL0,&ADC_VGrid1[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
+//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -143,6 +144,7 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL1,&ADC_VGrid2[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
+//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -152,6 +154,7 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL2,&ADC_VGrid3[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
+//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -161,6 +164,7 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL3,&ADC_VGen1[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
+//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -170,6 +174,7 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL4,&ADC_VGen2[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
+//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -189,6 +194,9 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL21,&ADC_temperature[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
+
+//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
+
 }
 
 /* End user code. Do not edit comment generated here */

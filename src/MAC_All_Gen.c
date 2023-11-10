@@ -103,7 +103,7 @@ uint8_t trans_enable=0;
 uint8_t GenIsConnected =0;
 uint8_t error_check=0;
 uint8_t MACisConnected=1;
-extern volatile uint32_t tick;
+
 float cof_vol[12] = {-121.9066, 121.9066*3.3,  -122.1679, 122.1679*3.3,   -119.24,  119.24*3.3,
 					 -123.7055, 123.7055*3.3,  -120.2011, 120.2011*3.3,   -120.7989,120.7989*3.3
 };
@@ -1115,11 +1115,7 @@ void PC1X_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
-	MAC_registers[0x3C] = 0;
-=======
-//	MAC_registers[0x3C] = 0;
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1130,9 +1126,7 @@ void PC1X_Stop()
 	{
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
-=======
-		MAC_registers[0x4C] = 0; // No error
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1146,11 +1140,7 @@ void DST4400_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
-	MAC_registers[0x3C] = 0;
-=======
-//	MAC_registers[0x3C] = 0;
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1161,9 +1151,7 @@ void DST4400_Stop()
 	{
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
-=======
-		MAC_registers[0x4C] = 0; // No error
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1177,11 +1165,7 @@ void D300_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
-	MAC_registers[0x3C] = 0;
-=======
-//	MAC_registers[0x3C] = 0;
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1192,9 +1176,7 @@ void D300_Stop()
 	{
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
-=======
-		MAC_registers[0x4C] = 0; // No error
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1208,11 +1190,7 @@ void DSE7320_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
-	MAC_registers[0x3C] = 0;
-=======
-//	MAC_registers[0x3C] = 0;
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+
 
 	if(Gen_check()) waittime(MAC_registers[0x58]);
 	if(Gen_check())
@@ -1223,9 +1201,7 @@ void DSE7320_Stop()
 	{
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
-=======
-		MAC_registers[0x4C] = 0; // No error
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1239,11 +1215,7 @@ void GC315_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
-	MAC_registers[0x3C] = 0;
-=======
-//	MAC_registers[0x3C] = 0;
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1254,9 +1226,7 @@ void GC315_Stop()
 	{
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
-=======
-		MAC_registers[0x4C] = 0; // No error
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1270,11 +1240,7 @@ void DKG307_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
-	MAC_registers[0x3C] = 0;
-=======
-//	MAC_registers[0x3C] = 0;
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1285,9 +1251,7 @@ void DKG307_Stop()
 	{
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
-=======
-		MAC_registers[0x4C] = 0; // No error
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1312,9 +1276,7 @@ void Emko_Stop()
 	{
 <<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 //		MAC_registers[0x4C] = 0; // No error
-=======
-		MAC_registers[0x4C] = 0; // No error
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
+		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1988,51 +1950,53 @@ void Import_Smartgen_Reg(uint16_t *Smartgen_reg, uint16_t *MAC_registers)
 }
 void RS485_Master_Mode(uint16_t *Slave_registers,uint16_t *MAC_registers, generator_type gen_type)
 {
-	switch(gen_type)
+	if(MAC_registers[0x5C]==1)
 	{
-	case SMARTGEN:
-		RS485_M_Cmd03_and_Receive(Smartgen_ID, 0,35, Slave_registers);
-		RS485_M_Cmd01_and_Receive(Smartgen_ID, 113,1, Slave_registers);
-		Import_Smartgen_Reg(Slave_registers,MAC_registers);
-		break;
-	case EMKO:
-		RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
-		Import_Emko_Reg(Slave_registers,MAC_registers);
-		break;
-	case DKG307:
-		RS485_M_Cmd03_and_Receive(DKG307_ID, 0,16, Slave_registers); //0-0x0F: 16 registers
-		RS485_M_Cmd03_and_Receive(DKG307_ID, 16,4, Slave_registers+16); //0x10-0x13: 4 registers
-		RS485_M_Cmd03_and_Receive(DKG307_ID, 22,3, Slave_registers+22);
-		RS485_M_Cmd03_and_Receive(DKG307_ID, 42,5, Slave_registers+42);
-		Import_DKG307_Reg(Slave_registers,MAC_registers);
-		break;
-	case GC315:
-		RS485_M_Cmd04_and_Receive(GC315_ID, 0,44, Slave_registers);
-		Import_GC315_Reg(Slave_registers,MAC_registers);
-		break;
-	case DSE7320:
-//		//baudrate 115200
-		RS485_M_Cmd03_and_Receive(DSE7320_ID, 1000,58, Slave_registers);
-		Import_DSE7320_Reg(Slave_registers,MAC_registers);
-		break;
-	case D300:
-		RS485_M_Cmd03_and_Receive(D300_ID, 10200,164, Slave_registers);
-		Import_D300_Reg(Slave_registers,MAC_registers);
-		break;
-	case DST4400:
-		RS485_M_Cmd04_and_Receive(DST4400_ID, 0,130, Slave_registers);
-		Import_DST4400_Reg(Slave_registers,MAC_registers);
-		break;
-	case PC1X:
-		RS485_M_Cmd03_and_Receive(PC1X_ID, 40000,45, Slave_registers);
-		Import_PC1X_Reg(Slave_registers,MAC_registers);
-		break;
-	default:
-		RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
-		Import_Emko_Reg(Slave_registers,MAC_registers);
+		switch(gen_type)
+		{
+		case SMARTGEN:
+			RS485_M_Cmd03_and_Receive(Smartgen_ID, 0,35, Slave_registers);
+			RS485_M_Cmd01_and_Receive(Smartgen_ID, 113,1, Slave_registers);
+			Import_Smartgen_Reg(Slave_registers,MAC_registers);
+			break;
+		case EMKO:
+			RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
+			Import_Emko_Reg(Slave_registers,MAC_registers);
+			break;
+		case DKG307:
+			RS485_M_Cmd03_and_Receive(DKG307_ID, 0,16, Slave_registers); //0-0x0F: 16 registers
+			RS485_M_Cmd03_and_Receive(DKG307_ID, 16,4, Slave_registers+16); //0x10-0x13: 4 registers
+			RS485_M_Cmd03_and_Receive(DKG307_ID, 22,3, Slave_registers+22);
+			RS485_M_Cmd03_and_Receive(DKG307_ID, 42,5, Slave_registers+42);
+			Import_DKG307_Reg(Slave_registers,MAC_registers);
+			break;
+		case GC315:
+			RS485_M_Cmd04_and_Receive(GC315_ID, 0,44, Slave_registers);
+			Import_GC315_Reg(Slave_registers,MAC_registers);
+			break;
+		case DSE7320:
+	//		//baudrate 115200
+			RS485_M_Cmd03_and_Receive(DSE7320_ID, 1000,58, Slave_registers);
+			Import_DSE7320_Reg(Slave_registers,MAC_registers);
+			break;
+		case D300:
+			RS485_M_Cmd03_and_Receive(D300_ID, 10200,164, Slave_registers);
+			Import_D300_Reg(Slave_registers,MAC_registers);
+			break;
+		case DST4400:
+			RS485_M_Cmd04_and_Receive(DST4400_ID, 0,130, Slave_registers);
+			Import_DST4400_Reg(Slave_registers,MAC_registers);
+			break;
+		case PC1X:
+			RS485_M_Cmd03_and_Receive(PC1X_ID, 40000,45, Slave_registers);
+			Import_PC1X_Reg(Slave_registers,MAC_registers);
+			break;
+		default:
+			RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
+			Import_Emko_Reg(Slave_registers,MAC_registers);
+		}
 	}
 }
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
 void ATM_CMD_REBOOT()
 {
 	char tmp[20];
@@ -2052,36 +2016,8 @@ void ATM_CMD_REBOOT()
 	sprintf(print_str,"AT+REBOOT\r\n");
 	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
 	R_BSP_SoftwareDelay(1000, BSP_DELAY_MILLISECS);
-
-
-		//print test
-//		memset(print_str, 0, sizeof(print_str));
-//		sprintf(print_str,"\r\nAUX: ");
-//		RS485_DE2 = 1U; //RS485 send
-//		R_SCI5_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
-//		R_BSP_SoftwareDelay(10, BSP_DELAY_MILLISECS);
-//		R_SCI5_AsyncTransmit((uint8_t*)rx1_buff,strlen(rx1_buff));
-//		RS485_DE2 = 0U; //RS485 send
-		//end_print_test
-
-//	if(strlen(rx1_buff)) //+AUX:
-//	{
-//		if((rx1_buff[3]=='X')&&(rx1_buff[4]==':'))
-//		{
-//			memset(tmp, 0, sizeof(tmp));
-//			strncpy(tmp,rx1_buff+5,strlen(rx1_buff)-5);
-//			curr5 = atoi(tmp);
-//
-//			if(curr5*2.5>100) MAC_registers[0x1C] = (uint16_t)(curr5*2.5); //Curr
-//			else MAC_registers[0x1C] = 0;
-//		}
-//	}
-
-
 }
 
-=======
->>>>>>> parent of 7591abe (v5):src/MAC_All_Gen.c
 void ATM_CMD_AUX()
 {
 	char tmp[20];
@@ -2351,9 +2287,7 @@ void Load_Check()
 	ATM_CMD_read(3);
 	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_AUX();
-	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
-<<<<<<< HEAD:src/MAC_All_Gen_Manual_No_FB.c
-
+	if(g_sci12_rx_count>7) RS485_Slave_Mode(MAC_registers);
 	if(!atm_reboot)
 	{
 		if(MAC_registers[0x06]==0 && MAC_registers[0x07]==0 && MAC_registers[0x08]==0 && (MAC_registers[0x18]!=0 ||MAC_registers[0x19]!=0 || MAC_registers[0x1A]!=0))

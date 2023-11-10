@@ -48,7 +48,7 @@ extern volatile uint8_t * gp_sci5_rx_address;                /* SCI5 receive buf
 extern volatile uint16_t  g_sci5_rx_count;                   /* SCI5 receive data number */
 extern volatile uint16_t  g_sci5_rx_length;                  /* SCI5 receive data length */
 /* Start user code for global. Do not edit comment generated here */
-char rx5_buff[300];
+char rx5_buff[256];
 volatile uint8_t SCI5_rxdone;
 static volatile uint8_t SCI5_txdone;
 /* End user code. Do not edit comment generated here */

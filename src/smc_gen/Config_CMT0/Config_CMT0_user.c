@@ -134,7 +134,6 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL0,&ADC_VGrid1[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
-//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -144,7 +143,6 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL1,&ADC_VGrid2[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
-//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -154,7 +152,6 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL2,&ADC_VGrid3[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
-//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -164,7 +161,6 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL3,&ADC_VGen1[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
-//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -174,7 +170,6 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL4,&ADC_VGen2[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
-//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
 
 	R_Config_S12AD0_Start();
 	cnt = 50;
@@ -194,9 +189,6 @@ void ADC_Sample(uint16_t count)
 	R_Config_S12AD0_Get_ValueResult(ADCHANNEL21,&ADC_temperature[count]);
 	R_Config_S12AD0_Stop();
 	adc_completed=0;
-
-//	R_BSP_SoftwareDelay(50, BSP_DELAY_MICROSECS);
-
 }
 
 /* End user code. Do not edit comment generated here */

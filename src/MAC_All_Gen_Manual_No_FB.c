@@ -15,7 +15,7 @@
 #include "deviceFlash.h"
 #include "storage.h"
 /***************** MAC PARAMETTERS *************************************************/
-#define SAMPLES_NUM 16
+#define SAMPLES_NUM 64
 #define PC1X_ID 0x01
 #define DST4400_ID 0x01
 #define D300_ID 0x01
@@ -26,7 +26,7 @@
 #define Emko_ID 0x01
 #define MAC_ID 0x06
 #define MAC_timeout_level 300
-#define MAC_VERSION 8
+#define MAC_VERSION 7
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -66,8 +66,8 @@ generator_type GENTYPE = EMKO;
 /***************** MAC SCI **********************************************/
 char print_str[200];
 extern char rx1_buff[60];
-extern char rx12_buff[300];
-extern char rx5_buff[300];
+extern char rx12_buff[128];
+extern char rx5_buff[260];
 extern uint16_t  g_sci12_rx_count;
 extern volatile uint8_t SCI5_rxdone;
 extern storage_data_t storageData;
@@ -79,7 +79,6 @@ extern volatile uint8_t l0_edge_detected;
 extern volatile uint8_t l3a_edge_detected;
 extern volatile uint8_t l3c_edge_detected;
 extern float grid_freq1,grid_freq2,grid_freq3;
-extern uint32_t timestamp0[2],timestamp1[2],timestamp4[2],timestamp5[2],timestamp6[2],timestamp7[2];
 extern volatile bool Sample_done;
 uint16_t ADC_VGen1[SAMPLES_NUM], ADC_VGen2[SAMPLES_NUM], ADC_VGen3[SAMPLES_NUM];
 uint16_t ADC_VGrid1[SAMPLES_NUM], ADC_VGrid2[SAMPLES_NUM], ADC_VGrid3[SAMPLES_NUM];
@@ -103,7 +102,7 @@ uint8_t trans_enable=0;
 uint8_t GenIsConnected =0;
 uint8_t error_check=0;
 uint8_t MACisConnected=1;
-extern volatile uint32_t tick;
+
 float cof_vol[12] = {-121.9066, 121.9066*3.3,  -122.1679, 122.1679*3.3,   -119.24,  119.24*3.3,
 					 -123.7055, 123.7055*3.3,  -120.2011, 120.2011*3.3,   -120.7989,120.7989*3.3
 };
@@ -111,9 +110,9 @@ float cof_vol_test[12] = {-11, 121.9066*3.3,  -12, 122.1679*3.3,   -13,  119.24*
 					 -14, 123.7055*3.3,  -15, 120.2011*3.3,   -16,120.7989*3.3
 };
 /***************** MAC REGISTERS *************************************************/
-uint16_t MAC_registers[300];
-uint8_t Rs485_MasterResponse[300];// Response to MCC
-uint16_t Gen_registers[200];
+uint16_t MAC_registers[130];
+uint8_t Rs485_MasterResponse[265];// Response to MCC
+uint16_t Gen_registers[120];
 uint16_t previous_mode;
 uint8_t atm_reboot=0;
 
@@ -210,7 +209,7 @@ void main(void)
 	R_Config_SCI5_Start();// RS485 Connect Generator
 	R_Config_SCI1_Start();// Current Sensor
 	R_Config_SCI12_Start();// RS485 Connect MCC
-	R_Config_SCI12_Serial_Receive((uint8_t*)&rx12_buff, sizeof(rx12_buff));//MAC buffer
+	R_Config_SCI12_Serial_Receive((uint8_t*)&rx12_buff, 100);//MAC buffer
 	g_sci12_rx_count=0;
 
 
@@ -251,7 +250,7 @@ void main(void)
 	freq_ustbl_time_count=0;
 	freq_start = MAC_registers[0x0F];
 	Grid_check();
-//	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	Gen_check();
 	wait_time=0;
 
@@ -264,8 +263,8 @@ void main(void)
 	{
 		if(g_sci12_rx_count>7)
 		{
-//			SCI12.SCR.BIT.RIE = 0U;
-//			SCI12.SCR.BIT.RE = 0U;
+			SCI12.SCR.BIT.RIE = 0U;
+			SCI12.SCR.BIT.RE = 0U;
 			RS485_Slave_Mode(MAC_registers);
 		}
 		else
@@ -274,6 +273,7 @@ void main(void)
 			RS485_Master_Mode(Gen_registers,MAC_registers,GENTYPE);
 			Load_Check();
 			Grid_check();
+			R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 			Gen_check();
 			error_check = ErrorCheck();
 			// RELAY 5 CONTROL
@@ -579,14 +579,12 @@ void RS485_Slave_Mode(uint16_t *MAC_registers)
 	}
 	g_sci12_rx_count=0;
 	memset(rx12_buff, 0, sizeof(rx12_buff));
-	R_Config_SCI12_Serial_Receive((uint8_t*)&rx12_buff, sizeof(rx12_buff));
+	R_Config_SCI12_Serial_Receive((uint8_t*)&rx12_buff, 50);
 }
 
 
 void Gen_Volt_Cal()
 {
-	uint32_t lasttick = tick;
-	while(!Sample_done && tick-lasttick<50);
 	if(Sample_done)
 	{
 		gen_volt1=0;gen_volt2=0;gen_volt3=0;
@@ -604,8 +602,7 @@ void Gen_Volt_Cal()
 			{
 				gen_volt1 = 160.0 + (3.3-gen_volt1)*35;
 			}
-			else
-			{
+			else {
 				gen_volt1 = (3.3-gen_volt1)*(-1)*cof_vol[6];
 			}
 			if(gen_volt1<70) gen_volt1 =0;
@@ -662,15 +659,8 @@ uint8_t Gen_check()
 	}
 	else
 	{
-		if(tick-timestamp4[0]<30)
-		{
-
-		}
-		else
-		{
-			gen_freq1=0;
-			state4=0;
-		}
+		gen_freq1=0;
+		state4=0;
 	}
 	if(state1==2)
 	{
@@ -687,15 +677,8 @@ uint8_t Gen_check()
 	}
 	else
 	{
-		if(tick-timestamp1[0]<30)
-		{
-
-		}
-		else
-		{
-			gen_freq2=0;
-			state1=0;
-		}
+		gen_freq2=0;
+		state1=0;
 	}
 
 	if(state0==2)
@@ -713,15 +696,8 @@ uint8_t Gen_check()
 	}
 	else
 	{
-		if(tick-timestamp0[0]<30)
-		{
-
-		}
-		else
-		{
-			gen_freq3=0;
-			state0=0;
-		}
+		gen_freq3=0;
+		state0=0;
 	}
 
 //	if((gen_freq1<0.045)||(gen_freq2<0.045)||(gen_freq3<0.045)) //<45Hz
@@ -816,8 +792,6 @@ uint8_t Gen_check()
 }
 void Grid_Volt_Cal()
 {
-	uint32_t lasttick = tick;
-	while(!Sample_done && tick-lasttick<50);
 	if(Sample_done)
 	{
 		grid_volt1=0;grid_volt2=0;grid_volt3=0;
@@ -835,8 +809,7 @@ void Grid_Volt_Cal()
 			{
 				grid_volt1 = 160.0 + (3.3-grid_volt1)*35;
 			}
-			else
-			{
+			else {
 				grid_volt1 = (3.3-grid_volt1)*(-1)*cof_vol[0];
 			}
 			if(grid_volt1<70) grid_volt1 =0;
@@ -850,8 +823,7 @@ void Grid_Volt_Cal()
 			{
 				grid_volt2 = 160.0 + (3.3-grid_volt2)*35;
 			}
-			else
-			{
+			else {
 				grid_volt2 = (3.3-grid_volt2)*(-1)*cof_vol[2];
 			}
 			if(grid_volt2<70) grid_volt2 =0;
@@ -865,8 +837,7 @@ void Grid_Volt_Cal()
 			{
 				grid_volt3 = 160.0 + (3.3-grid_volt3)*35;
 			}
-			else
-			{
+			else {
 				grid_volt3 = (3.3-grid_volt3)*(-1)*cof_vol[4];
 			}
 			if(grid_volt3<70) grid_volt3 =0;
@@ -1142,7 +1113,7 @@ void PC1X_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1152,7 +1123,6 @@ void PC1X_Stop()
 	else
 	{
 //		MAC_registers[0x4C] = 0; // No error
-		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1166,7 +1136,7 @@ void DST4400_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1176,7 +1146,6 @@ void DST4400_Stop()
 	else
 	{
 //		MAC_registers[0x4C] = 0; // No error
-		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1190,7 +1159,7 @@ void D300_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1200,7 +1169,6 @@ void D300_Stop()
 	else
 	{
 //		MAC_registers[0x4C] = 0; // No error
-		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1214,7 +1182,7 @@ void DSE7320_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]);
 	if(Gen_check())
@@ -1224,7 +1192,6 @@ void DSE7320_Stop()
 	else
 	{
 //		MAC_registers[0x4C] = 0; // No error
-		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1238,7 +1205,7 @@ void GC315_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1248,7 +1215,6 @@ void GC315_Stop()
 	else
 	{
 //		MAC_registers[0x4C] = 0; // No error
-		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1262,7 +1228,7 @@ void DKG307_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1272,7 +1238,6 @@ void DKG307_Stop()
 	else
 	{
 //		MAC_registers[0x4C] = 0; // No error
-		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1286,7 +1251,7 @@ void Emko_Stop()
 {
 	ATS_CTRL_GEN_START_1 = 0;
 	MAC_registers[0x45] = 0;
-
+	MAC_registers[0x3C] = 0;
 
 	if(Gen_check()) waittime(MAC_registers[0x58]); //In case Gen off already -> dont have to wait
 	if(Gen_check())
@@ -1296,7 +1261,6 @@ void Emko_Stop()
 	else
 	{
 //		MAC_registers[0x4C] = 0; // No error
-		MAC_registers[0x3C] = 0;
 		GenStart =0;
 	}
 }
@@ -1542,13 +1506,13 @@ void RS485_M_Cmd01_and_Receive(uint8_t slaveID, uint32_t StartAdd, uint16_t NoR,
 	CRC16 = CRC16_bytewise(request, 6);
 	*(request+6) = CRC16 & 0xff;
 	*(request+7) = CRC16 >> 8;
-	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff,6);
 	RS485_DE2 = 1U; //RS485 send mode
 	R_SCI5_AsyncTransmit(request,8);
 	RS485_DE2 = 0U; //RS485 receive mode
-	uint32_t lasttick = tick;
 
-	while((!SCI5_rxdone) && (tick-lasttick<100));
+
+	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff,6);
+	while((!SCI5_rxdone) && (!R_BSP_SoftwareDelay(100, BSP_DELAY_MILLISECS)));
 	if (SCI5_rxdone ==1)
 	{
 		//print test
@@ -1625,14 +1589,13 @@ void RS485_M_Cmd03_and_Receive(uint8_t slaveID, uint32_t StartAdd, uint16_t NoR,
 	CRC16 = CRC16_bytewise(request, 6);
 	*(request+6) = CRC16 & 0xff;
 	*(request+7) = CRC16 >> 8;
-	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff, (NoR*2+5));
 	RS485_DE2 = 1U; //RS485 send mode
 	R_SCI5_AsyncTransmit(request,8);
 	RS485_DE2 = 0U; //RS485 receive mode
-	uint32_t lasttick = tick;
 
 
-	while((!SCI5_rxdone) && (tick-lasttick<100));
+	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff, (NoR*2+5));
+	while((!SCI5_rxdone) && (!R_BSP_SoftwareDelay(100, BSP_DELAY_MILLISECS)));
 	if (SCI5_rxdone ==1)
 	{
 		//print test
@@ -1709,14 +1672,13 @@ void RS485_M_Cmd04_and_Receive(uint8_t slaveID, uint32_t StartAdd, uint16_t NoR,
 	CRC16 = CRC16_bytewise(request, 6);
 	*(request+6) = CRC16 & 0xff;
 	*(request+7) = CRC16 >> 8;
-	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff, (NoR*2+5));
 	RS485_DE2 = 1U; //RS485 send mode
 	R_SCI5_AsyncTransmit(request,8);
 	RS485_DE2 = 0U; //RS485 receive mode
-	uint32_t lasttick = tick;
 
 
-	while((!SCI5_rxdone) && (tick-lasttick<100));
+	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff, (NoR*2+5));
+	while((!SCI5_rxdone) && (!R_BSP_SoftwareDelay(100, BSP_DELAY_MILLISECS)));
 	if (SCI5_rxdone ==1)
 	{
 		//print test
@@ -1972,51 +1934,48 @@ void Import_Smartgen_Reg(uint16_t *Smartgen_reg, uint16_t *MAC_registers)
 }
 void RS485_Master_Mode(uint16_t *Slave_registers,uint16_t *MAC_registers, generator_type gen_type)
 {
-	if(MAC_registers[0x5C]==1)
+	switch(gen_type)
 	{
-		switch(gen_type)
-		{
-		case SMARTGEN:
-			RS485_M_Cmd03_and_Receive(Smartgen_ID, 0,35, Slave_registers);
-			RS485_M_Cmd01_and_Receive(Smartgen_ID, 113,1, Slave_registers);
-			Import_Smartgen_Reg(Slave_registers,MAC_registers);
-			break;
-		case EMKO:
-			RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
-			Import_Emko_Reg(Slave_registers,MAC_registers);
-			break;
-		case DKG307:
-			RS485_M_Cmd03_and_Receive(DKG307_ID, 0,16, Slave_registers); //0-0x0F: 16 registers
-			RS485_M_Cmd03_and_Receive(DKG307_ID, 16,4, Slave_registers+16); //0x10-0x13: 4 registers
-			RS485_M_Cmd03_and_Receive(DKG307_ID, 22,3, Slave_registers+22);
-			RS485_M_Cmd03_and_Receive(DKG307_ID, 42,5, Slave_registers+42);
-			Import_DKG307_Reg(Slave_registers,MAC_registers);
-			break;
-		case GC315:
-			RS485_M_Cmd04_and_Receive(GC315_ID, 0,44, Slave_registers);
-			Import_GC315_Reg(Slave_registers,MAC_registers);
-			break;
-		case DSE7320:
-	//		//baudrate 115200
-			RS485_M_Cmd03_and_Receive(DSE7320_ID, 1000,58, Slave_registers);
-			Import_DSE7320_Reg(Slave_registers,MAC_registers);
-			break;
-		case D300:
-			RS485_M_Cmd03_and_Receive(D300_ID, 10200,164, Slave_registers);
-			Import_D300_Reg(Slave_registers,MAC_registers);
-			break;
-		case DST4400:
-			RS485_M_Cmd04_and_Receive(DST4400_ID, 0,130, Slave_registers);
-			Import_DST4400_Reg(Slave_registers,MAC_registers);
-			break;
-		case PC1X:
-			RS485_M_Cmd03_and_Receive(PC1X_ID, 40000,45, Slave_registers);
-			Import_PC1X_Reg(Slave_registers,MAC_registers);
-			break;
-		default:
-			RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
-			Import_Emko_Reg(Slave_registers,MAC_registers);
-		}
+	case SMARTGEN:
+		RS485_M_Cmd03_and_Receive(Smartgen_ID, 0,35, Slave_registers);
+		RS485_M_Cmd01_and_Receive(Smartgen_ID, 113,1, Slave_registers);
+		Import_Smartgen_Reg(Slave_registers,MAC_registers);
+		break;
+	case EMKO:
+		RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
+		Import_Emko_Reg(Slave_registers,MAC_registers);
+		break;
+	case DKG307:
+		RS485_M_Cmd03_and_Receive(DKG307_ID, 0,16, Slave_registers); //0-0x0F: 16 registers
+		RS485_M_Cmd03_and_Receive(DKG307_ID, 16,4, Slave_registers+16); //0x10-0x13: 4 registers
+		RS485_M_Cmd03_and_Receive(DKG307_ID, 22,3, Slave_registers+22);
+		RS485_M_Cmd03_and_Receive(DKG307_ID, 42,5, Slave_registers+42);
+		Import_DKG307_Reg(Slave_registers,MAC_registers);
+		break;
+	case GC315:
+		RS485_M_Cmd04_and_Receive(GC315_ID, 0,44, Slave_registers);
+		Import_GC315_Reg(Slave_registers,MAC_registers);
+		break;
+	case DSE7320:
+//		//baudrate 115200
+		RS485_M_Cmd03_and_Receive(DSE7320_ID, 1000,58, Slave_registers);
+		Import_DSE7320_Reg(Slave_registers,MAC_registers);
+		break;
+	case D300:
+		RS485_M_Cmd03_and_Receive(D300_ID, 10200,164, Slave_registers);
+		Import_D300_Reg(Slave_registers,MAC_registers);
+		break;
+	case DST4400:
+		RS485_M_Cmd04_and_Receive(DST4400_ID, 0,130, Slave_registers);
+		Import_DST4400_Reg(Slave_registers,MAC_registers);
+		break;
+	case PC1X:
+		RS485_M_Cmd03_and_Receive(PC1X_ID, 40000,45, Slave_registers);
+		Import_PC1X_Reg(Slave_registers,MAC_registers);
+		break;
+	default:
+		RS485_M_Cmd04_and_Receive(Emko_ID, 0,100, Slave_registers);
+		Import_Emko_Reg(Slave_registers,MAC_registers);
 	}
 }
 void ATM_CMD_REBOOT()
@@ -2038,6 +1997,32 @@ void ATM_CMD_REBOOT()
 	sprintf(print_str,"AT+REBOOT\r\n");
 	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
 	R_BSP_SoftwareDelay(1000, BSP_DELAY_MILLISECS);
+
+
+		//print test
+//		memset(print_str, 0, sizeof(print_str));
+//		sprintf(print_str,"\r\nAUX: ");
+//		RS485_DE2 = 1U; //RS485 send
+//		R_SCI5_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
+//		R_BSP_SoftwareDelay(10, BSP_DELAY_MILLISECS);
+//		R_SCI5_AsyncTransmit((uint8_t*)rx1_buff,strlen(rx1_buff));
+//		RS485_DE2 = 0U; //RS485 send
+		//end_print_test
+
+//	if(strlen(rx1_buff)) //+AUX:
+//	{
+//		if((rx1_buff[3]=='X')&&(rx1_buff[4]==':'))
+//		{
+//			memset(tmp, 0, sizeof(tmp));
+//			strncpy(tmp,rx1_buff+5,strlen(rx1_buff)-5);
+//			curr5 = atoi(tmp);
+//
+//			if(curr5*2.5>100) MAC_registers[0x1C] = (uint16_t)(curr5*2.5); //Curr
+//			else MAC_registers[0x1C] = 0;
+//		}
+//	}
+
+
 }
 
 void ATM_CMD_AUX()
@@ -2052,7 +2037,8 @@ void ATM_CMD_AUX()
 	memset(print_str, 0, sizeof(print_str));
 	sprintf(print_str,"AT+AUX?\r\n");
 	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
-	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
+	R_BSP_SoftwareDelay(100, BSP_DELAY_MILLISECS);
+
 
 		//print test
 //		memset(print_str, 0, sizeof(print_str));
@@ -2090,7 +2076,9 @@ void ATM_CMD_FREQ()
 	memset(print_str, 0, sizeof(print_str));
 	sprintf(print_str,"AT+FREQ?\r\n");
 	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
-	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
+	R_BSP_SoftwareDelay(100, BSP_DELAY_MILLISECS);
+
+
 
 	if(strlen(rx1_buff))
 	{
@@ -2155,8 +2143,7 @@ void ATM_CMD_read(uint8_t channel)
 	memset(print_str, 0, sizeof(print_str));
 	sprintf(print_str,"AT+READ?%d\r\n",channel);
 	R_SCI1_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
-	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
-
+	R_BSP_SoftwareDelay(100, BSP_DELAY_MILLISECS);
 	//RESPONSE: +READ:<channel>,<voltage>,<current>,<power>,<energy>\r\n
 	//Update version RESPONSE: +READ:<channel>,<voltage>,<current>,<power>,<power factor>,<energy>\r\n
 
@@ -2295,13 +2282,20 @@ void ATM_CMD_read(uint8_t channel)
 }
 void Load_Check()
 {
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_FREQ();
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_read(2);
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_read(1);
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_read(0);
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_read(3);
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
 	ATM_CMD_AUX();
-	if(g_sci12_rx_count>7) RS485_Slave_Mode(MAC_registers);
+	R_BSP_SoftwareDelay(50, BSP_DELAY_MILLISECS);
+
 	if(!atm_reboot)
 	{
 		if(MAC_registers[0x06]==0 && MAC_registers[0x07]==0 && MAC_registers[0x08]==0 && (MAC_registers[0x18]!=0 ||MAC_registers[0x19]!=0 || MAC_registers[0x1A]!=0))
@@ -2380,6 +2374,7 @@ void Mode_Auto()
 			//STOP GEN
 			if(Gen_check())
 			{
+//				DKG_Stop();
 				GENERATOR_STOP(GENTYPE);
 			}
 			if(!Gen_check()) gen_running_timeout=0;
@@ -2405,6 +2400,25 @@ void Mode_Auto()
 						// check gen run time
 						if(gen_running_timeout==0) // No violation -
 						{
+//							// OFF GRID CONTACTOR
+//							Grid_Contactor_Off();
+//							//Check Gen
+//							if(Gen_check()==1) // if gen ON
+//							{
+//								//ON GEN CONTACTOR
+//								Gen_Contactor_On();
+//							}
+//							else // if gen OFF
+//							{
+//								if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected Gen no output
+//								{
+//									MAC_registers[0x4C] =3; // GEN NO OUTPUT
+//								}
+//								// OFF GEN CONTACTOR
+//								Gen_Contactor_Off();
+//								// START GEN & ON GEN CONTACTOR
+//								Process_StartGen();
+//							}
 							// Gen auto control
 							if(MAC_registers[0x4C]!=0)
 							{
@@ -2445,6 +2459,25 @@ void Mode_Auto()
 					// check gen run time
 					if(gen_running_timeout==0) // No violation -
 					{
+//						// OFF GRID CONTACTOR
+//						Grid_Contactor_Off();
+//						//Check Gen
+//						if(Gen_check()==1) // if gen ON
+//						{
+//							//ON GEN CONTACTOR
+//							Gen_Contactor_On();
+//						}
+//						else // if gen OFF
+//						{
+//							if(MAC_registers[0x3C]==2||MAC_registers[0x3C]==3) //Unexpected no Output at GEN
+//							{
+//								MAC_registers[0x4C] =3; // Error GEN no Output
+//							}
+//							// OFF GEN CONTACTOR
+//							Gen_Contactor_Off();
+//							// START GEN & ON GEN CONTACTOR
+//							Process_StartGen();
+//						}
 						// Gen auto control
 						if(MAC_registers[0x4C]!=0)
 						{
@@ -2516,10 +2549,12 @@ void Process_StoptGen_Manual()
 {
 	for(uint8_t i=0;i<3;i++)
 	{
+//		DKG_Stop();
 		GENERATOR_STOP(GENTYPE);
 		if(!Gen_check())
 		{
 			MAC_registers[0x3C] =0;
+//			MAC_registers[0x4C] =0; //GEN stop successfully
 			i=3;
 		}
 		else
@@ -2534,6 +2569,7 @@ void Process_StoptGen_Manual()
 	}
 	else
 	{
+//		MAC_registers[0x4C] = 0; //GEN stop successfully
 	}
 	MAC_registers[0x42] =0;
 }
@@ -2544,18 +2580,41 @@ void Process_StartGen_Manual()
 	{
 		for(uint8_t i=0;i<MAC_registers[0x61];i++)
 		{
+	//		Smartgen_Manual(Smartgen_ID, 0x0004, 0x00FF); // Manual Mode
+	//		Smartgen_Start(Smartgen_ID, 0x0000, 0x00FF);
+//			DKG_Start();
 			MAC_registers[0x3C] =1; //gen starts
 			GENERATOR_START(GENTYPE);
 			waittime(MAC_registers[0x62]); //thoi gian de [0x62]
 
+			//print test
+	//		memset(print_str, 0, sizeof(print_str));
+	//		sprintf(print_str,"\r\nfinish wait ",i);
+	//		RS485_DE2 = 1U; //RS485 send
+	//		R_SCI5_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
+	//		RS485_DE2 = 0U; //RS485 send
+			//end_print_test
 
 			if(Gen_check())
 			{
+				//print test
+	//			memset(print_str, 0, sizeof(print_str));
+	//			sprintf(print_str,"\r\nGen run ",i);
+	//			RS485_DE2 = 1U; //RS485 send
+	//			R_SCI5_AsyncTransmit((uint8_t*)print_str,strlen(print_str));
+	//			RS485_DE2 = 0U; //RS485 send
+				//end_print_test
+
+//				MAC_registers[0x4C] = 0;
 				GenStart=1; // start count run time
 				i=3;
+
 			}
 			else
 			{
+
+	//			Smartgen_Stop(Smartgen_ID, 0x0001, 0x00FF);
+//				DKG_Stop();
 				MAC_registers[0x4C] = 1;
 				GENERATOR_STOP(GENTYPE);
 				waittime(MAC_registers[0x63]); //thoi gian nghi giua 2 lan de [0x63]
@@ -2576,7 +2635,7 @@ void Process_StartGen_Manual()
 		}
 		else
 		{
-
+//			MAC_registers[0x4C] = 0;
 		}
 	}
 	else
@@ -2591,11 +2650,15 @@ void Process_StartGen()
 	{
 		for(uint8_t i=0;i<MAC_registers[0x61];i++)
 		{
+	//		Smartgen_Manual(Smartgen_ID, 0x0004, 0x00FF); // Manual Mode
+	//		Smartgen_Start(Smartgen_ID, 0x0000, 0x00FF);
+//			DKG_Start();
 			MAC_registers[0x3C] =1; //gen start
 			GENERATOR_START(GENTYPE);
 			waittime(MAC_registers[0x62]); //thoi gian de [0x62]
 			if(Gen_check())
 			{
+//				MAC_registers[0x4C] = 0;
 				GenStart=1; // run time count
 				// wait stable
 				waittime(MAC_registers[0x59]);
@@ -2606,6 +2669,8 @@ void Process_StartGen()
 			}
 			else
 			{
+	//			Smartgen_Stop(Smartgen_ID, 0x0001, 0x00FF);
+//				DKG_Stop();
 				GENERATOR_STOP(GENTYPE);
 				waittime(MAC_registers[0x63]); // thoi gian nghi giua 2 lan de [0x63]
 			}
@@ -2623,9 +2688,10 @@ void Process_StartGen()
 void waittime(uint16_t second)
 {
 	wait_time =0;
+//	R_Config_SCI12_Serial_Receive((uint8_t*)&rx12_buff, 100);//MAC buffer
 	while(wait_time<second) //
 	{
-//		R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
+		R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
 		if(g_sci12_rx_count>7) 	RS485_Slave_Mode(MAC_registers);
 
 		//print test
@@ -2637,8 +2703,10 @@ void waittime(uint16_t second)
 		//end_print_test
 		RS485_Master_Mode(Gen_registers,MAC_registers,GENTYPE);
 		Load_Check();
-		Grid_check();
 		Gen_check();
+		R_BSP_SoftwareDelay(150, BSP_DELAY_MILLISECS);
+		Grid_check();
+		R_BSP_SoftwareDelay(150, BSP_DELAY_MILLISECS);
 	}
 }
 
@@ -2721,7 +2789,6 @@ void Grid_Contactor_On()
 	MAC_registers[0x43]=1;
 	R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
 	MAC_registers[0x3A] =FB_GRID_COIL; // update grid contactor sts
-	if(g_sci12_rx_count>7) RS485_Slave_Mode(MAC_registers);
 	//check feedback
 	if(FB_GRID_COIL==0) // incorrect
 	{
@@ -2740,7 +2807,6 @@ void Grid_Contactor_Off()
 	MAC_registers[0x43]=0;
 	R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
 	MAC_registers[0x3A] =FB_GRID_COIL; // update grid contactor sts
-	if(g_sci12_rx_count>7) RS485_Slave_Mode(MAC_registers);
 	//check feed back
 	if(FB_GRID_COIL==0) //correct
 	{
@@ -2759,7 +2825,6 @@ void Gen_Contactor_On()
 	MAC_registers[0x44]=1;
 	R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
 	MAC_registers[0x3B] =FB_GEN_COIL; // update gen contactor sts
-	if(g_sci12_rx_count>7) RS485_Slave_Mode(MAC_registers);
 	//check feedback
 	if(FB_GEN_COIL==0) // incorrect
 	{
@@ -2779,7 +2844,6 @@ void Gen_Contactor_Off()
 	MAC_registers[0x44]=0;
 	R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
 	MAC_registers[0x3B] =FB_GEN_COIL; // update gen contactor sts
-	if(g_sci12_rx_count>7) RS485_Slave_Mode(MAC_registers);
 	if(FB_GEN_COIL==0) //corrects
 	{
 		if(MAC_registers[0x4D] == 2) MAC_registers[0x4D] =0; // no error

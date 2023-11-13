@@ -26,7 +26,7 @@
 #define Emko_ID 0x01
 #define MAC_ID 0x06
 #define MAC_timeout_level 300
-#define MAC_VERSION 9
+#define MAC_VERSION 10
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -2294,17 +2294,16 @@ void Load_Check()
 	ATM_CMD_read(3);
 	ATM_CMD_AUX();
 	if(g_sci12_rx_count>7) RS485_Slave_Mode(MAC_registers);
-	if(!atm_reboot)
-	{
+//	if(!atm_reboot)
+//	{
 		if(MAC_registers[0x06]==0 && MAC_registers[0x07]==0 && MAC_registers[0x08]==0 && (MAC_registers[0x18]!=0 ||MAC_registers[0x19]!=0 || MAC_registers[0x1A]!=0))
 		{
-			R_BSP_SoftwareDelay(1000, BSP_DELAY_MILLISECS);
 			ATM_CMD_REBOOT();
 			MAC_registers[0x7E] += 1;
 			atm_reboot =1;
 			Buzzer(2, 50);
 		}
-	}
+//	}
 	if(MAC_registers[0x06]>15000 || MAC_registers[0x07]>15000 || MAC_registers[0x08]>15000)
 	{
 		atm_reboot =0;

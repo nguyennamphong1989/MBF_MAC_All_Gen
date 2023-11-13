@@ -26,7 +26,7 @@
 #define Emko_ID 0x01
 #define MAC_ID 0x06
 #define MAC_timeout_level 300
-#define MAC_VERSION 10
+#define MAC_VERSION 11
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -116,6 +116,7 @@ uint8_t Rs485_MasterResponse[300];// Response to MCC
 uint16_t Gen_registers[120];
 uint16_t previous_mode;
 uint8_t atm_reboot=0;
+uint32_t atm_reboot_time=0;
 
 /***************** FUNCTION *************************************************/
 MD_STATUS R_SCI12_AsyncTransmit (uint8_t * const tx_buf,uint16_t tx_num,uint8_t control);
@@ -1343,7 +1344,6 @@ void Smartgen_Stop(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 				//end_print_test
 
 				// Update Gen error register
-//				MAC_registers[0x4C] = 0; // No error
 				MAC_registers[0x3C] = 0; // GEN STOP
 				MAC_registers[0x39] = 0; // Gen no voltage
 				GenStart =0;
@@ -1366,7 +1366,6 @@ void Smartgen_Stop(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 		}
 		else
 		{
-//			MAC_registers[0x4C] = 0; // No error
 			MAC_registers[0x3C] = 0; // GEN STOP
 			MAC_registers[0x39] = 0; // Gen no voltage
 			GenStart =0;
@@ -1459,13 +1458,10 @@ void Smartgen_Start(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 	CRC16 = CRC16_bytewise(request, 6);
 	*(request+6) = CRC16 & 0xff;
 	*(request+7) = CRC16 >> 8;
-
-
+	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff, 8);
 	RS485_DE2 = 1U; //RS485 send mode
 	R_SCI5_AsyncTransmit(request,8);
 	RS485_DE2 = 0U; //RS485 receive mode
-
-	R_Config_SCI5_Serial_Receive((uint8_t*)&rx5_buff, 8);
 	if(g_sci12_rx_count>7) 	RS485_Slave_Mode(MAC_registers);
 	R_BSP_SoftwareDelay(100, BSP_DELAY_MILLISECS);
 
@@ -1499,11 +1495,7 @@ void Smartgen_Start(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 //				memset(print_str, 0, sizeof(print_str));
 				//end_print_test
 
-				// Update Gen error register
-
-//				MAC_registers[0x4C] = 0; //Gen Start successfully
 				GenStart =1;
-
 			}
 		}
 		else
@@ -2298,10 +2290,14 @@ void Load_Check()
 //	{
 		if(MAC_registers[0x06]==0 && MAC_registers[0x07]==0 && MAC_registers[0x08]==0 && (MAC_registers[0x18]!=0 ||MAC_registers[0x19]!=0 || MAC_registers[0x1A]!=0))
 		{
-			ATM_CMD_REBOOT();
-			MAC_registers[0x7E] += 1;
-			atm_reboot =1;
-			Buzzer(2, 50);
+			if(tick - atm_reboot_time>10000)
+			{
+				atm_reboot_time = tick;
+				ATM_CMD_REBOOT();
+				MAC_registers[0x7E] += 1;
+				atm_reboot =1;
+				Buzzer(2, 50);
+			}
 		}
 //	}
 	if(MAC_registers[0x06]>15000 || MAC_registers[0x07]>15000 || MAC_registers[0x08]>15000)
@@ -2338,10 +2334,8 @@ void Process_OffAll()
 		//OFF GEN CONTACTOR
 		Gen_Contactor_Off();
 		// OFF gen
-		if(Gen_check())
-		{
-			GENERATOR_STOP(GENTYPE);
-		}
+		GENERATOR_STOP(GENTYPE);
+
 		if(GenStart==0) g_is_all_relay_off =1; // Gen stop succesfully
 	}
 
@@ -2550,7 +2544,6 @@ void Process_StoptGen_Manual()
 		if(!Gen_check())
 		{
 			MAC_registers[0x3C] =0;
-//			MAC_registers[0x4C] =0; //GEN stop successfully
 			i=3;
 		}
 		else

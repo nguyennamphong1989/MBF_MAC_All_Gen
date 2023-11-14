@@ -61,6 +61,7 @@ uint32_t MAC_runtime=0;
 extern uint32_t Timer1Relay5;
 extern uint32_t Timer2Relay5;
 bool gen_running_timeout=0;
+uint32_t MAC_disconnect_time_count=0;
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -103,10 +104,19 @@ static void r_Config_CMT1_cmi1_interrupt(void)
 	{
 		MAC_timeout++;
 		LED_MCC=0;
+		MAC_disconnect_time_count=0;
 	}
 	else //no connection to MCC
 	{
 		LED_MCC ^=1;
+		if(MAC_disconnect_time_count < MAC_RESET_TIME)//reset MAC after a time of disconnecting to MCC
+		{
+			MAC_disconnect_time_count++;
+		}
+		else
+		{
+			if(MAC_registers[0x3C]==0) PowerON_Reset_PC();
+		}
 	}
 	//LED_GEN
 	if(GenIsConnected) LED_GEN=0;

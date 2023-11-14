@@ -26,7 +26,7 @@
 #define Emko_ID 0x01
 #define MAC_ID 0x06
 #define MAC_timeout_level 300
-#define MAC_VERSION 11
+#define MAC_VERSION 12
 typedef enum {
 	SMARTGEN =1,
 	EMKO =2,
@@ -1361,7 +1361,6 @@ void Smartgen_Stop(uint8_t slaveID, uint16_t Coil_address, uint16_t Value)
 		if(Gen_check())
 		{
 			MAC_registers[0x4C] = 2; // GEN DOESNT STOP AFTER COOLING
-//			MAC_registers[0x3C] = 2; // GEN RUN WITHOUT LOAD
 			MAC_registers[0x39] = 1; // Gen has voltage
 		}
 		else
@@ -2594,7 +2593,6 @@ void Process_StartGen_Manual()
 	//			RS485_DE2 = 0U; //RS485 send
 				//end_print_test
 
-//				MAC_registers[0x4C] = 0;
 				GenStart=1; // start count run time
 				i=3;
 
@@ -2624,7 +2622,7 @@ void Process_StartGen_Manual()
 		}
 		else
 		{
-//			MAC_registers[0x4C] = 0;
+
 		}
 	}
 	else
@@ -2647,7 +2645,6 @@ void Process_StartGen()
 			waittime(MAC_registers[0x62]); //thoi gian de [0x62]
 			if(Gen_check())
 			{
-//				MAC_registers[0x4C] = 0;
 				GenStart=1; // run time count
 				// wait stable
 				waittime(MAC_registers[0x59]);

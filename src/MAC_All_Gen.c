@@ -15,7 +15,7 @@
 #include "deviceFlash.h"
 #include "storage.h"
 /***************** MAC PARAMETTERS *************************************************/
-#define SAMPLES_NUM 64
+#define SAMPLES_NUM 16
 #define PC1X_ID 0x01
 #define DST4400_ID 0x01
 #define D300_ID 0x01
@@ -25,7 +25,7 @@
 #define Smartgen_ID 0x01
 #define Emko_ID 0x01
 #define MAC_ID 0x06
-#define MAC_timeout_level 300
+#define MAC_timeout_level_DC 300
 #define MAC_VERSION 12
 typedef enum {
 	SMARTGEN =1,
@@ -278,8 +278,8 @@ void main(void)
 			TimerMode();
 			//Check Door Open
 			if(!DOOR_OPEN_DETECT) MAC_registers[0x4B] =0;
-			// No Connection with MCC
-			if(MAC_timeout == MAC_timeout_level)
+			// No Connection with MCC set DC_LOW
+			if(MAC_timeout >= MAC_timeout_level_DC)
 			{
 				MAC_registers[0x3E] =1;
 			}
@@ -584,7 +584,7 @@ void RS485_Slave_Mode(uint16_t *MAC_registers)
 void Gen_Volt_Cal()
 {
 	uint32_t lasttick = tick;
-	while(!Sample_done && tick-lasttick<50);
+	while(!Sample_done && (tick-lasttick<100));
 	if(Sample_done)
 	{
 		gen_volt1=0;gen_volt2=0;gen_volt3=0;
@@ -815,7 +815,7 @@ uint8_t Gen_check()
 void Grid_Volt_Cal()
 {
 	uint32_t lasttick = tick;
-	while(!Sample_done && tick-lasttick<50);
+	while(!Sample_done && tick-lasttick<100);
 	if(Sample_done)
 	{
 		grid_volt1=0;grid_volt2=0;grid_volt3=0;
